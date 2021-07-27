@@ -88,20 +88,20 @@ EXEC_ALL := ${EXEC} ${EXEC_TCC} ${EXEC_GCC} ${EXEC_CLANG}
 
 .PHONY: all 
 all: ${ASTYLE} $(EXEC) run 
-SOURCES_TNECS := tnecs.c
+SOURCES_Q_MATH := q_math.c
 SOURCES_TEST := test.c
 HEADERS := $(wildcard *.h)
-SOURCES_ALL := $(SOURCES_TEST) $(SOURCES_TNECS) 
-TARGETS_TNECS := $(SOURCES_TNECS:.c=.o)
-TARGETS_TNECS_GCC := $(SOURCES_TNECS:.c=_gcc.o)
-TARGETS_TNECS_TCC := $(SOURCES_TNECS:.c=_tcc.o)
-TARGETS_TNECS_CLANG := $(SOURCES_TNECS:.c=_clang.o)
-TARGETS_ALL := ${TARGETS_TNECS} ${TARGETS_TNECS_GCC} ${TARGETS_TNECS_TCC} ${TARGETS_TNECS_CLANG}
+SOURCES_ALL := $(SOURCES_TEST) $(SOURCES_Q_MATH) 
+TARGETS_Q_MATH := $(SOURCES_Q_MATH:.c=.o)
+TARGETS_Q_MATH_GCC := $(SOURCES_Q_MATH:.c=_gcc.o)
+TARGETS_Q_MATH_TCC := $(SOURCES_Q_MATH:.c=_tcc.o)
+TARGETS_Q_MATH_CLANG := $(SOURCES_Q_MATH:.c=_clang.o)
+TARGETS_ALL := ${TARGETS_Q_MATH} ${TARGETS_Q_MATH_GCC} ${TARGETS_Q_MATH_TCC} ${TARGETS_Q_MATH_CLANG}
 .PHONY: compile_test
 compile_test: ${ASTYLE} ${EXEC_TCC} ${EXEC_GCC} ${EXEC_CLANG} tcc gcc clang
 
 .PHONY : cov
-cov:  $(TARGETS_TNECS) $(EXEC) run ; lcov -c --no-external -d . -o main_coverage.info ; genhtml main_coverage.info -o out
+cov:  $(TARGETS_Q_MATH) $(EXEC) run ; lcov -c --no-external -d . -o main_coverage.info ; genhtml main_coverage.info -o out
 
 .PHONY : run
 run: $(EXEC); $(EXEC)
@@ -114,18 +114,16 @@ clang: $(EXEC_CLANG) ; $(EXEC_CLANG)
 .PHONY : astyle
 astyle: $(HEADERS) $(SOURCES_ALL); astyle --style=java --indent=spaces=4 --indent-switches --pad-oper --pad-comma --pad-header --unpad-paren  --align-pointer=middle --align-reference=middle --add-braces --add-one-line-braces --attach-return-type --convert-tabs --suffix=none *.h *.c
 
-$(TARGETS_TNECS) : $(SOURCES_TNECS) ; $(COMPILER) $< -c -o $@ $(FLAGS_COV)
+$(TARGETS_Q_MATH) : $(SOURCES_Q_MATH) ; $(COMPILER) $< -c -o $@ $(FLAGS_COV)
 
-$(TARGETS_TNECS_CLANG) : $(SOURCES_TNECS) ; clang $< -c -o $@ 
-$(TARGETS_TNECS_GCC) : $(SOURCES_TNECS) ; gcc $< -c -o $@
-$(TARGETS_TNECS_TCC) : $(SOURCES_TNECS) ; tcc $< -c -o $@ 
+$(TARGETS_Q_MATH_CLANG) : $(SOURCES_Q_MATH) ; clang $< -c -o $@ 
+$(TARGETS_Q_MATH_GCC) : $(SOURCES_Q_MATH) ; gcc $< -c -o $@
+$(TARGETS_Q_MATH_TCC) : $(SOURCES_Q_MATH) ; tcc $< -c -o $@ 
 
-$(EXEC): $(SOURCES_TEST) $(TARGETS_TNECS); ${COMPILER} $< $(TARGETS_TNECS) -o $@ $(CFLAGS) $(FLAGS_COV)
-$(EXEC_TCC): $(SOURCES_TEST) $(TARGETS_TNECS_TCC); tcc $< $(TARGETS_TNECS_TCC) -o $@ $(CFLAGS)
-$(EXEC_GCC): $(SOURCES_TEST) $(TARGETS_TNECS_GCC); gcc $< $(TARGETS_TNECS_GCC) -o $@ $(CFLAGS)
-$(EXEC_CLANG): $(SOURCES_TEST) $(TARGETS_TNECS_CLANG); clang $< $(TARGETS_TNECS_CLANG) -o $@ $(CFLAGS)
-
-
+$(EXEC): $(SOURCES_TEST) $(TARGETS_Q_MATH); ${COMPILER} $< $(TARGETS_Q_MATH) -o $@ $(CFLAGS) $(FLAGS_COV)
+$(EXEC_TCC): $(SOURCES_TEST) $(TARGETS_Q_MATH_TCC); tcc $< $(TARGETS_Q_MATH_TCC) -o $@ $(CFLAGS)
+$(EXEC_GCC): $(SOURCES_TEST) $(TARGETS_Q_MATH_GCC); gcc $< $(TARGETS_Q_MATH_GCC) -o $@ $(CFLAGS)
+$(EXEC_CLANG): $(SOURCES_TEST) $(TARGETS_Q_MATH_CLANG); clang $< $(TARGETS_Q_MATH_CLANG) -o $@ $(CFLAGS)
 
 .PHONY: clean
-clean: ; @echo "Cleaning tnecs" & rm -frv $(TARGETS_ALL) $(EXEC_ALL) out *.gcda *.gcno *.gcov *.info *.bin *.exe
+clean: ; @echo "Cleaning q_math " & rm -frv $(TARGETS_ALL) $(EXEC_ALL) out *.gcda *.gcno *.gcov *.info *.bin *.exe
