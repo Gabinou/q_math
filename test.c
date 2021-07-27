@@ -7,6 +7,73 @@
 #include <string.h>
 
 #include "q_math.h"
+/********************** 0.1 MICROSECOND RESOLUTION CLOCK **********************/
+//  Modified from: https://gist.github.com/ForeverZer0/0a4f80fc02b96e19380ebb7a3debbee5
+#if defined(__linux)
+#  define MICROSECOND_CLOCK
+#  define HAVE_POSIX_TIMER
+#  include <time.h>
+#  ifdef CLOCK_MONOTONIC
+#     define CLOCKID CLOCK_MONOTONIC
+#  else
+#     define CLOCKID CLOCK_REALTIME
+#  endif
+#elif defined(__APPLE__)
+#  define MICROSECOND_CLOCK
+#  define HAVE_MACH_TIMER
+#  include <mach/mach_time.h>
+#elif defined(_WIN32)
+#  define MICROSECOND_CLOCK
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+#endif
+
+uint64_t get_ns() {
+    static uint64_t is_init = 0;
+#if defined(__APPLE__)
+    static mach_timebase_info_data_t info;
+    if (0 == is_init) {
+        mach_timebase_info(&info);
+        is_init = 1;
+    }
+    uint64_t now;
+    now = mach_absolute_time();
+    now *= info.numer;
+    now /= info.denom;
+    return now;
+#elif defined(__linux)
+    static struct timespec linux_rate;
+    if (0 == is_init) {
+        clock_getres(CLOCKID, &linux_rate);
+        is_init = 1;
+    }
+    uint64_t now;
+    struct timespec spec;
+    clock_gettime(CLOCKID, &spec);
+    now = spec.tv_sec * 1.0e9 + spec.tv_nsec;
+    return now;
+#elif defined(_WIN32)
+    static LARGE_INTEGER win_frequency;
+    if (0 == is_init) {
+        QueryPerformanceFrequency(&win_frequency);
+        is_init = 1;
+    }
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    return (uint64_t)((1e9 * now.QuadPart) / win_frequency.QuadPart);
+#endif
+}
+#ifdef MICROSECOND_CLOCK
+double get_us() {
+    return (get_ns() / 1e3);
+}
+#else
+#  define FAILSAFE_CLOCK
+#  define get_us() (((double)clock())/CLOCKS_PER_SEC*1e6) // [us]
+#  define get_ns() (((double)clock())/CLOCKS_PER_SEC*1e9) // [ns]
+#endif
+
+
 
 /* MINCTEST - Minimal C Test Library - 0.2.0
 *  ---------> MODIFIED FOR q_math <----------
@@ -80,6 +147,11 @@ void dupprintf(FILE * f, char const * fmt, ...) { // duplicate printf
 }
 
 #endif /*__MINCTEST_H__*/
+
+
+/*******************************CONSTANTS***************************/
+#define ITERATIONS 10000
+
 /*******************************ACTUAL TESTS***************************/
 void test_log2() {
     lok(log2(0.0) == -INFINITY);
@@ -449,11 +521,48 @@ void test_q_math() {
     out = q_sequence_pingpong_int32_t(current, upper2, lower);
     lok(out == 4);
 }
+void cache_benchmarks() {
+    dupprintf(globalf, "\nOther tnecs benchmarks\n");
+    size_t row = 100;
+    size_t col = 10;
+    double t_0, t_1;
+
+    uint8_t * temp_cache = calloc(row * col, sizeof(*temp_cache));
+
+
+    t_0 = get_us();
+    for (size_t i = 0; i < ITERATIONS; i++) {
+        for (size_t r = 0; r < row; row++) {
+            for (size_t c = 0; c < col; col++) {
+                temp_cache[(r * col + c)] = r + c;
+            }
+        }
+    }
+    t_1 = get_us();
+    dupprintf(globalf, "cache row col %d \n", ITERATIONS);
+    dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
+
+    // col row is cache friendly!
+    t_0 = get_us();
+    for (size_t i = 0; i < ITERATIONS; i++) {
+        for (size_t c = 0; c < col; col++) {
+            for (size_t r = 0; r < row; row++) {
+                temp_cache[(r * col + c)] = r + c;
+            }
+        }
+    }
+    t_1 = get_us();
+    dupprintf(globalf, "cache col row %d \n", ITERATIONS);
+    dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
+
+}
+
 
 int main() {
     globalf = fopen("q_math_test_results.txt", "w+");
     dupprintf(globalf, "\nHello, World! I am testing q_math.\n");
     lrun("log2", test_log2);
+    cache_benchmarks();
     lresults();
 
     dupprintf(globalf, "q_math Test End \n \n");
