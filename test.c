@@ -529,13 +529,13 @@ void cache_benchmarks() {
     double t_0, t_1;
 
     uint8_t * temp_cache = calloc(row * col, sizeof(*temp_cache));
-    uint8_t * temp_cache3d = calloc(row * col * depth, sizeof(*temp_cache));
+    uint64_t * temp_cache3d = calloc(row * col * depth, sizeof(*temp_cache3d));
 
-
+    // row col is cache friendly!
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
-        for (size_t r = 0; r < row; row++) {
-            for (size_t c = 0; c < col; col++) {
+        for (size_t r = 0; r < row; r++) {
+            for (size_t c = 0; c < col; c++) {
                 temp_cache[(r * col + c)] = r + c;
             }
         }
@@ -544,11 +544,10 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache row col %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
-    // col row is cache friendly!
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
-        for (size_t c = 0; c < col; col++) {
-            for (size_t r = 0; r < row; row++) {
+        for (size_t c = 0; c < col; c++) {
+            for (size_t r = 0; r < row; r++) {
                 temp_cache[(r * col + c)] = r + c;
             }
         }
@@ -560,10 +559,10 @@ void cache_benchmarks() {
     // row col depth is cache friendly!
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
-        for (size_t r = 0; r < row; row++) {
-            for (size_t c = 0; c < col; col++) {
+        for (size_t r = 0; r < row; r++) {
+            for (size_t c = 0; c < col; c++) {
                 for (size_t d = 0; d < depth; d++) {
-                    temp_cache[(r * col * row + c * row + d)] = r + c + d;
+                    temp_cache3d[(r * col * row + c * row + d)] = r + c + d;
                 }
             }
         }
@@ -572,11 +571,12 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache row col depth %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
+    t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
-        for (size_t c = 0; c < col; col++) {
-            for (size_t r = 0; r < row; row++) {
+        for (size_t c = 0; c < col; c++) {
+            for (size_t r = 0; r < row; r++) {
                 for (size_t d = 0; d < depth; d++) {
-                    temp_cache[(r * col * row + c * row + d)] = r + c + d;
+                    temp_cache3d[(r * col * row + c * row + d)] = r + c + d;
                 }
             }
         }
@@ -585,11 +585,12 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache col row depth %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
+    t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
-        for (size_t c = 0; c < col; col++) {
+        for (size_t c = 0; c < col; c++) {
             for (size_t d = 0; d < depth; d++) {
-                for (size_t r = 0; r < row; row++) {
-                    temp_cache[(r * col * row + c * row + d)] = r + c + d;
+                for (size_t r = 0; r < row; r++) {
+                    temp_cache3d[(r * col * row + c * row + d)] = r + c + d;
                 }
             }
         }
@@ -598,24 +599,25 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache col depth row %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
+    t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
-        for (size_t r = 0; r < row; row++) {
+        for (size_t r = 0; r < row; r++) {
             for (size_t d = 0; d < depth; d++) {
-                for (size_t c = 0; c < col; col++) {
-                    temp_cache[(r * col * row + c * row + d)] = r + c + d;
+                for (size_t c = 0; c < col; c++) {
+                    temp_cache3d[(r * col * row + c * row + d)] = r + c + d;
                 }
             }
         }
     }
     t_1 = get_us();
-
     dupprintf(globalf, "cache row depth col %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
+
     for (size_t i = 0; i < ITERATIONS; i++) {
         for (size_t d = 0; d < depth; d++) {
-            for (size_t r = 0; r < row; row++) {
-                for (size_t c = 0; c < col; col++) {
-                    temp_cache[(r * col * row + c * row + d)] = r + c + d;
+            for (size_t r = 0; r < row; r++) {
+                for (size_t c = 0; c < col; c++) {
+                    temp_cache3d[(r * col * row + c * row + d)] = r + c + d;
                 }
             }
         }
@@ -624,13 +626,12 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache depth row col %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
-    dupprintf(globalf, "cache row depth col %d \n", ITERATIONS);
-    dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
+    t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
         for (size_t d = 0; d < depth; d++) {
-            for (size_t c = 0; c < col; col++) {
-                for (size_t r = 0; r < row; row++) {
-                    temp_cache[(r * col * row + c * row + d)] = r + c + d;
+            for (size_t c = 0; c < col; c++) {
+                for (size_t r = 0; r < row; r++) {
+                    temp_cache3d[(r * col * row + c * row + d)] = r + c + d;
                 }
             }
         }
