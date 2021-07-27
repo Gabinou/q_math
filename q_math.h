@@ -28,7 +28,7 @@ REGISTER_ENUM(bool)
 #ifndef TEMPLATE_TYPES_FLOAT
 #define TEMPLATE_TYPES_FLOAT REGISTER_ENUM(float) \
 REGISTER_ENUM(double)
-#endif  /* TEMPLATE_TYPES_INT */
+#endif  /* TEMPLATE_TYPES_FLOAT */
 
 #ifndef TEMPLATE_TYPES
 #define TEMPLATE_TYPES REGISTER_ENUM(int8_t) \
@@ -42,9 +42,9 @@ REGISTER_ENUM(uint64_t) \
 REGISTER_ENUM(bool) \
 REGISTER_ENUM(float) \
 REGISTER_ENUM(double)
-#endif  /* TEMPLATE_TYPES_INT */
+#endif  /* TEMPLATE_TYPES */
 
-/************************* PERIODIC q_cycleS *****************************/
+/************************* PERIODIC CYCLES *****************************/
 // m:-1, p:1, z:0
 #define q_cycle2_zp(i) (i % 2)
 #define q_cycle2_pz(i) ((i + 1) % 2)
