@@ -11,7 +11,7 @@
     type out = (sign * (distance / geo_factor) < 1) ? sign : (distance / geo_factor);\
     return (out);\
 }
-Q_MATH_TEMPLATE_TYPES_INT
+TEMPLATE_TYPES_INT
 #undef REGISTER_ENUM
 
 // sequence_pingpong: oscillating integer sequence. upper is excluded.
@@ -23,7 +23,7 @@ Q_MATH_TEMPLATE_TYPES_INT
     type term2 = current % mod_factor;\
     return (fmin(term1, term2) + lower);\
 }
-Q_MATH_TEMPLATE_TYPES_INT
+TEMPLATE_TYPES_INT
 #undef REGISTER_ENUM
 
 // Sometimes attributed to John Carmack...
@@ -38,5 +38,5 @@ Q_MATH_TEMPLATE_TYPES_INT
     conv.f  *= (threehalfs - (x2 * conv.f * conv.f));\
     return conv.f;\
 }
-Q_MATH_TEMPLATE_TYPES
+TEMPLATE_TYPES
 #undef REGISTER_ENUM

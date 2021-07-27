@@ -13,7 +13,8 @@
 #endif
 
 /************************* CONSTANTS *****************************/
-#define Q_MATH_TEMPLATE_TYPES_INT REGISTER_ENUM(int8_t) \
+#ifndef TEMPLATE_TYPES_INT
+#define TEMPLATE_TYPES_INT REGISTER_ENUM(int8_t) \
 REGISTER_ENUM(uint8_t) \
 REGISTER_ENUM(int16_t) \
 REGISTER_ENUM(uint16_t) \
@@ -22,11 +23,15 @@ REGISTER_ENUM(uint32_t) \
 REGISTER_ENUM(int64_t) \
 REGISTER_ENUM(uint64_t)\
 REGISTER_ENUM(bool)
+#endif  /* TEMPLATE_TYPES_INT */
 
-#define Q_MATH_TEMPLATE_TYPES_FLOAT REGISTER_ENUM(float) \
+#ifndef TEMPLATE_TYPES_FLOAT
+#define TEMPLATE_TYPES_FLOAT REGISTER_ENUM(float) \
 REGISTER_ENUM(double)
+#endif  /* TEMPLATE_TYPES_INT */
 
-#define Q_MATH_TEMPLATE_TYPES REGISTER_ENUM(int8_t) \
+#ifndef TEMPLATE_TYPES
+#define TEMPLATE_TYPES REGISTER_ENUM(int8_t) \
 REGISTER_ENUM(uint8_t) \
 REGISTER_ENUM(int16_t) \
 REGISTER_ENUM(uint16_t) \
@@ -37,6 +42,7 @@ REGISTER_ENUM(uint64_t) \
 REGISTER_ENUM(bool) \
 REGISTER_ENUM(float) \
 REGISTER_ENUM(double)
+#endif  /* TEMPLATE_TYPES_INT */
 
 /************************* PERIODIC q_cycleS *****************************/
 // m:-1, p:1, z:0
@@ -87,15 +93,15 @@ REGISTER_ENUM(double)
 #define q_cycle6_pmzzmp(i) (q_cycle6_zmzzzp(i) + q_cycle6_pzzzmz(i))
 
 #define REGISTER_ENUM(type) extern type q_sequence_geometric_##type(type start, type destination, type geo_factor);
-Q_MATH_TEMPLATE_TYPES_INT
+TEMPLATE_TYPES_INT
 #undef REGISTER_ENUM
 
 #define REGISTER_ENUM(type) extern type q_sequence_pingpong_##type(type current, type upper, type lower);
-Q_MATH_TEMPLATE_TYPES_INT
+TEMPLATE_TYPES_INT
 #undef REGISTER_ENUM
 
 #define REGISTER_ENUM(type) extern float q_sqrt_##type(type in_int);
-Q_MATH_TEMPLATE_TYPES
+TEMPLATE_TYPES
 #undef REGISTER_ENUM
 
 #define  carmack_sqrt_int8_t q_sqrt_int8_t

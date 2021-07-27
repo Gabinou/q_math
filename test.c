@@ -150,7 +150,7 @@ void dupprintf(FILE * f, char const * fmt, ...) { // duplicate printf
 
 
 /*******************************CONSTANTS***************************/
-#define ITERATIONS 100000
+#define ITERATIONS 10000
 
 /*******************************ACTUAL TESTS***************************/
 void test_log2() {
@@ -531,7 +531,6 @@ void cache_benchmarks() {
     uint8_t * temp_cache = calloc(row * col, sizeof(*temp_cache));
     uint64_t * temp_cache3d = calloc(row * col * depth, sizeof(*temp_cache3d));
 
-    // row col is cache friendly!
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
         for (size_t r = 0; r < row; r++) {
@@ -543,6 +542,7 @@ void cache_benchmarks() {
     t_1 = get_us();
     dupprintf(globalf, "cache row col %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
+    dupprintf(globalf, "row col is cache friendly!\n\n");
 
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
@@ -576,7 +576,6 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache row col depth %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
-    // col row depth is cache friendly!
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
         for (size_t c = 0; c < col; c++) {
@@ -590,6 +589,7 @@ void cache_benchmarks() {
     t_1 = get_us();
     dupprintf(globalf, "cache col row depth %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
+    // dupprintf(globalf, "col row depth is cache friendly!\n\n");
 
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
