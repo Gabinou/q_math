@@ -135,6 +135,7 @@ static int lfails = 0;
         dupprintf(globalf,"%s:%d error \n", __FILE__, __LINE__);\
     }\
 } while (0)
+#endif /*__MINCTEST_H__*/
 
 void dupprintf(FILE * f, char const * fmt, ...) { // duplicate printf
     va_list ap;
@@ -145,9 +146,6 @@ void dupprintf(FILE * f, char const * fmt, ...) { // duplicate printf
     vfprintf(f, fmt, ap);
     va_end(ap);
 }
-
-#endif /*__MINCTEST_H__*/
-
 
 /*******************************CONSTANTS***************************/
 #define ITERATIONS 10000
@@ -165,8 +163,8 @@ void test_log2() {
 }
 
 void test_q_math() {
-    dupprintf(globalf, "test_q_math");
-    dupprintf(globalf, "test_q_cycles");
+    // dupprintf(globalf, "\ntest_q_math\n");
+    // dupprintf(globalf, "\ntest_q_cycles\n");
     lok(q_cycle2_zp(0) == 0);
     lok(q_cycle2_zp(1) == 1);
     lok(q_cycle2_zp(2) == 0);
@@ -444,7 +442,7 @@ void test_q_math() {
     lok(q_cycle6_pmzzmp(10) == -1);
     lok(q_cycle6_pmzzmp(11) == 1);
 
-    dupprintf(globalf, "Geometrics sequences");
+    // dupprintf(globalf, "\nGeometric sequences\n");
     int32_t current;
     int32_t upper1;
     int32_t upper2;
@@ -485,7 +483,7 @@ void test_q_math() {
     distance = q_sequence_geometric_int32_t(distance, 0, geo_factor);
     lok(distance == 1);
     lower = 0;
-    dupprintf(globalf, "pingpong");
+    dupprintf(globalf, "\npingpong sequences\n");
     out = q_sequence_pingpong_int32_t(current, upper1, lower);
     lok(out == 0);
     out = q_sequence_pingpong_int32_t(current, upper2, lower);
@@ -654,6 +652,7 @@ int main() {
     globalf = fopen("q_math_test_results.txt", "w+");
     dupprintf(globalf, "\nHello, World! I am testing q_math.\n");
     lrun("log2", test_log2);
+    lrun("q_math", test_q_math);
     cache_benchmarks();
     lresults();
 
