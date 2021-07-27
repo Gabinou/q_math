@@ -556,7 +556,6 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache col row %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
-    // row col depth is cache friendly!
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
         // dupprintf(globalf, "i %d \n", i);
@@ -577,6 +576,7 @@ void cache_benchmarks() {
     dupprintf(globalf, "cache row col depth %d \n", ITERATIONS);
     dupprintf(globalf, "%.1f [us] \n", t_1 - t_0);
 
+    // col row depth is cache friendly!
     t_0 = get_us();
     for (size_t i = 0; i < ITERATIONS; i++) {
         for (size_t c = 0; c < col; c++) {
